@@ -1,2 +1,2 @@
-# a-MAZE-ing maze things
- A-Maze-Ing way to vizualize different MST and maze making algorithms
+# A-Maze-ing
+ circle, star, all kinds of mazes!
