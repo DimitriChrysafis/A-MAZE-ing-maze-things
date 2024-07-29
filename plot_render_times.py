@@ -4,22 +4,24 @@ import os
 import matplotlib.cm as cm
 
 
-def read_render_times(file_path):
+
+#finally math 9 and 10 from last year coming in handy
+def readfrominput(pathoffile):
     data = []
-    with open(file_path, 'r') as file:
+    with open(pathoffile, 'r') as file:
         for line in file:
             algorithm, height, width, duration = line.strip().split(',')
             data.append((algorithm, int(height), int(width), float(duration)))
     return data
 
 
-def plot_render_times(data):
+def actyuallyplothtem(data):
     algorithms = sorted(set(item[0] for item in data))
-    colors = cm.tab10(np.linspace(0, 1, len(algorithms)))  # Use a color map for distinct colors
-    renders_dir = 'renders'
+    colors = cm.tab10(np.linspace(0, 1, len(algorithms)))  # Use a color map for distinct colors :!!!!ADLKFNJJADFADADFDFerwr
+    dictoryohshitimeandirectory = 'renders'
 
-    if not os.path.exists(renders_dir):
-        os.makedirs(renders_dir)
+    if not os.path.exists(dictoryohshitimeandirectory):
+        os.makedirs(dictoryohshitimeandirectory)
 
     for algo, color in zip(algorithms, colors):
         plt.figure(figsize=(10, 6))
@@ -39,14 +41,14 @@ def plot_render_times(data):
             plt.grid(True, linestyle='--', alpha=0.6)
 
             plt.tight_layout()
-            plt.savefig(os.path.join(renders_dir, f'render_times_{algo}.png'))
+            plt.savefig(os.path.join(dictoryohshitimeandirectory, f'render_times_{algo}.png'))
             plt.close()
 
 
 def main():
-    data = read_render_times('render_times.txt')
-    plot_render_times(data)
-    print("Plots have been saved in the 'renders' folder.")
+    data = readfrominput('render_times.txt')
+    actyuallyplothtem(data)
+    print("DONE")
 
 
 if __name__ == "__main__":
