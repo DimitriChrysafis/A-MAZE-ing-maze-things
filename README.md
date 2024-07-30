@@ -12,9 +12,9 @@
 </div>
 
 
-
+## Runtime with rendering (they're all the same)
 <div style="display: flex; justify-content: center;">
-    <img src="renders/render_times_all_algorithms.png" width="300">
+    <img src="renders/render_times_all_algorithms.png" width="800">
 </div>
    
 ### Mazes as Graphs
