@@ -7,9 +7,9 @@ import render
 import dfs
 import hunt_and_kill
 import kruskals
-from plot_render_times import read_render_times, plot_render_times
+from plot_render_times import readfrominput, actyuallyplothtem
 
-#for the prints that i have to show the percentage ur done with
+#for the prints that i have to show the percentage that we've rendered so far
 def countTotalIterations(mazeGenerate, height, width):
     return sum(1 for _ in mazeGenerate(height, width))
 
@@ -22,7 +22,7 @@ def saveAndGo(generateMaze, height, width, filename, interval=1, scale=10):
     totalFrames = (totalSteps + interval - 1) // interval
     print(f"TOTAL frames to be produced: {totalFrames}")
 
-    writer = imageio.get_writer(filename, fps=60, codec='libx264')
+    writer = imageio.get_writer(filename, fps=20, codec='libx264')
 
     for i, (maze, changedCell) in enumerate(generateMaze(height, width)):
         if i % interval == 0:
@@ -63,13 +63,13 @@ def actuallyGenerate(name, height, width, frameInterval=10):
     return duration
 
 def main():
-    # actuallyGenerate('prims', 150, 100, frameInterval=130)
+     #actuallyGenerate('prims', 1500, 1500, frameInterval=15000)
 
     algorithms = ['hunt_and_kill', 'kruskals', 'dfs', 'prims']
     results = []
 
     for name in algorithms:
-        for size in range(1, 300):
+        for size in range(1, 201):
             duration = actuallyGenerate(name, size, size)
             results.append(f'{name},{size},{size},{duration:.2f}\n')
 
@@ -78,9 +78,10 @@ def main():
 
 
     print("Generating plots...")
-    data = read_render_times('render_times.txt')
-    plot_render_times(data)
+    data = readfrominput('render_times.txt')
+    actyuallyplothtem(data)
     print("Plots have been saved.")
 
 if __name__ == "__main__":
     main()
+

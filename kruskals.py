@@ -2,9 +2,9 @@ import numpy as np
 import random
 
 class DisjointSet:
-    
-    #A class to represent a disjoint set for Kruskal's algorithm because
-    
+    """
+    A class to represent a disjoint set for Kruskal's algorithm because
+    """
 
     def __init__(self):
         self.parent = {}
