@@ -11,6 +11,11 @@
     <img src="demos_small/kruskals.gif" width="300">
 </div>
 
+
+
+<div style="display: flex; justify-content: center;">
+    <img src="renders/render_times_all_algorithms.png" width="300">
+</div>
    
 ### Mazes as Graphs
 
