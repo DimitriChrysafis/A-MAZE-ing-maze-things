@@ -1,3 +1,5 @@
+# A-Maze-ing Maze
+
 ### Mazes as Graphs
 
 Think of a maze as a graph:
