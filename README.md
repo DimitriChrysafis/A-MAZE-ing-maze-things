@@ -29,7 +29,7 @@ A perfect maze is like a SIMPLY tree in graph theory:
 - **Tree**: A special graph that’s connected (every cell is reachable) and acyclic (no loops).
 - **Unique Path**: In a perfect maze, there’s exactly one path between any two cells.
 
-## Visualization
+## Visualization (1000x1000 grids) (3h render time for all)
 
 Check out these animation technique for mazes using any method, expandable framework.
 
