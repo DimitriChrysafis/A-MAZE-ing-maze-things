@@ -1,6 +1,23 @@
-# A-Maze-ing mazes
+### Mazes as Graphs
 
-Animation technique for mazes using any method, expandable framework.
+Think of a maze as a graph:
+- **Cells** = Vertices (Nodes)
+- **Paths** = Edges (Connections)
+
+### Constructing the Graph
+
+1. **Vertices**: Each cell in the maze is a vertex.
+2. **Edges**: An edge exists between two vertices if there's a path (no wall) between them.
+
+### Perfect Maze = Tree
+
+A perfect maze is like a SIMPLY tree in graph theory:
+- **Tree**: A special graph that’s connected (every cell is reachable) and acyclic (no loops).
+- **Unique Path**: In a perfect maze, there’s exactly one path between any two cells.
+
+## Visualization
+
+Check out these animation technique for mazes using any method, expandable framework.
 
 
 Top left- DFS method  
