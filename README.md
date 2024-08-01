@@ -7,6 +7,10 @@
     <img src="cppdemos/10001x10001/lowres/lowresdumb.png" width="250">
     <img src="cppdemos/10001x10001/lowres/lowrescolor.png" width="250">
     <img src="cppdemos/10001x10001/lowres/lowressolved.png" width="250">
+    <img src="demos/sped_maze_dfs.gif" width="300">
+    <img src="demos/sped_maze_hunt_and_kill.gif" width="300">
+    <img src="demos/sped_maze_prims.gif" width="300">
+    <img src="demos/sped_maze_kruskals.gif" width="300">
 </div>
 
 
