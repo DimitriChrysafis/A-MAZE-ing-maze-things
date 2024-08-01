@@ -1,6 +1,10 @@
 # A-Maze-ing Maze
 
-## Demos
+## Component 1- Makes maze, heatmap, colormap, randommap and solves mazes.
+
+
+## Component 2- Framework which animates generation of mazes (done in python 100% v1 folder) 
+
 
 <div style="display: flex; justify-content: center;">
     <img src="demos_small/dfs.gif" width="300">
