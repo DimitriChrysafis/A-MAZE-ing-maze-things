@@ -5,11 +5,10 @@
 <div style="display: flex; justify-content: center;">
     <img src="cppdemos/10001x10001/lowres/lowresrandom.png" width="300">
     <img src="cppdemos/10001x10001/lowres/lowresdumb.png" width="300">
-</div>
-<div style="display: flex; justify-content: center;">
-    <img src="cppdemos/10001x10001/lowres/lowresrandom.png" width="300">
+    <img src="cppdemos/10001x10001/lowres/lowrescolor.png" width="300">
     <img src="cppdemos/10001x10001/lowres/lowressolved.png" width="300">
 </div>
+
 
 ### Logic to maze generation
 
