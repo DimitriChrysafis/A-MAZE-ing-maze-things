@@ -1,5 +1,11 @@
 # A-Maze-ing Maze
 
+## Component 1- Makes maze, heatmap, colormap, randommap and solves mazes.
+## Component 2- Framework which animates generation of mazes
+
+
+
+
 ## Demos
 
 <div style="display: flex; justify-content: center;">
