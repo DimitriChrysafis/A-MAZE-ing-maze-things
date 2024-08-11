@@ -19,10 +19,11 @@ using namespace std;
 using namespace std::chrono;
 namespace fs = std::__fs::filesystem;
 
-string DESKTOP_PATH = "/Users/dimitrichrysafis/Desktop/";
+const string DESKTOP_PATH = "/Users/dimitrichrysafis/Desktop/";
+// put ur path here
 
-int DX[4] = {1, 0, -1, 0};
-int DY[4] = {0, 1, 0, -1};
+const int DX[4] = {1, 0, -1, 0};
+const int DY[4] = {0, 1, 0, -1};
 
 bool isValid(int x, int y, int width, int height) {
     return x >= 0 && x < width && y >= 0 && y < height;
@@ -32,9 +33,7 @@ void shuffleDirections(vector<int>& directions) {
     random_shuffle(directions.begin(), directions.end());
 }
 
-void generateMaze(string& mazeFile, int width, int height, int startX, int startY, atomic<double>& progress) {
-    auto start = chrono::high_resolution_clock::now();
-
+void generateMaze(const string& mazeFile, int width, int height, int startX, int startY, atomic<double>& progress) {
     ofstream mazeOut(mazeFile, ios::binary);
     vector<vector<int>> maze(height, vector<int>(width, 0));
     stack<pair<int, int>> stack;
@@ -42,8 +41,6 @@ void generateMaze(string& mazeFile, int width, int height, int startX, int start
     maze[startY][startX] = 1;
     int totalCells = (width / 2) * (height / 2);
     int visitedCells = 1;
-
-    int lastProgress = 0;
 
     while (!stack.empty()) {
         int x = stack.top().first;
@@ -63,12 +60,7 @@ void generateMaze(string& mazeFile, int width, int height, int startX, int start
                 stack.push({nx, ny});
                 moved = true;
                 visitedCells++;
-                int currentProgress = (visitedCells * 100) / totalCells;
-                if (currentProgress >= lastProgress + 1) {
-                    progress = currentProgress;
-                    cout << "Maze generation progress: " << currentProgress << "%" << endl;
-                    lastProgress = currentProgress;
-                }
+                progress = (visitedCells / static_cast<double>(totalCells)) * 100.0;
                 break;
             }
         }
@@ -78,88 +70,66 @@ void generateMaze(string& mazeFile, int width, int height, int startX, int start
         }
     }
 
-    for (auto& row : maze) {
-        mazeOut.write(reinterpret_cast<char*>(row.data()), row.size() * sizeof(int));
+    for (const auto& row : maze) {
+        mazeOut.write(reinterpret_cast<const char*>(row.data()), row.size() * sizeof(int));
     }
 
     progress = 100.0;
     mazeOut.close();
     cout << "Maze generation complete." << endl;
 
+
     fs::path mazePath(mazeFile);
     auto mazeSize = fs::file_size(mazePath);
     cout << "Maze file stored at: " << mazeFile << endl;
     cout << "Maze file size: " << mazeSize << " bytes" << endl;
-
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
-    cout << "Maze generation took " << duration.count() << " milliseconds." << endl;
 }
 
-void calculateDistances(string& mazeFile, string& distFile, int width, int height, int startX, int startY, atomic<double>& progress) {
 
-    auto startTime = high_resolution_clock::now();
-
+void calculateDistances(const string& mazeFile, const string& distFile, int width, int height, int startX, int startY, atomic<double>& progress) {
     ifstream mazeIn(mazeFile, ios::binary);
-    vector<int> maze(width * height);
-    mazeIn.read(reinterpret_cast<char*>(maze.data()), width * height * sizeof(int));
-    mazeIn.close();
+    ofstream distOut(distFile, ios::binary);
 
-    auto endTime = high_resolution_clock::now();
-    duration<double> readDuration = endTime - startTime;
-    cout << "Time to read maze data: " << readDuration.count() << " seconds." << endl;
-
-    startTime = high_resolution_clock::now();
-
-    vector<int> distances(width * height, -1);
-    deque<pair<int, int>> q;
-    q.push_back({startX, startY});
-    distances[startY * width + startX] = 0;
-
-    int totalCells = 0;
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            if (maze[y * width + x] == 1) {
-                ++totalCells;
-            }
-        }
+    vector<vector<int>> maze(height, vector<int>(width, 0));
+    for (auto& row : maze) {
+        mazeIn.read(reinterpret_cast<char*>(row.data()), row.size() * sizeof(int));
     }
 
+    vector<vector<int>> distances(height, vector<int>(width, -1));
+    queue<pair<int, int>> q;
+    q.push({startX, startY});
+    distances[startY][startX] = 0;
+    int totalCells = 0;
+    for (const auto& row : maze) {
+        totalCells += count(row.begin(), row.end(), 1);
+    }
     int processedCells = 0;
 
     while (!q.empty()) {
         int x = q.front().first;
         int y = q.front().second;
-        q.pop_front();
+        q.pop();
 
         for (int dir = 0; dir < 4; ++dir) {
             int nx = x + DX[dir];
             int ny = y + DY[dir];
 
-            if (isValid(nx, ny, width, height) && maze[ny * width + nx] == 1 && distances[ny * width + nx] == -1) {
-                distances[ny * width + nx] = distances[y * width + x] + 1;
-                q.push_back({nx, ny});
+            if (isValid(nx, ny, width, height) && maze[ny][nx] == 1 && distances[ny][nx] == -1) {
+                distances[ny][nx] = distances[y][x] + 1;
+                q.push({nx, ny});
                 processedCells++;
                 progress = (processedCells / static_cast<double>(totalCells)) * 100.0;
             }
         }
     }
 
-    endTime = high_resolution_clock::now();
-    duration<double> calcDuration = endTime - startTime;
-    cout << "Time to calculate distances: " << calcDuration.count() << " seconds." << endl;
-
-    startTime = high_resolution_clock::now();
-
-    ofstream distOut(distFile, ios::binary);
-    distOut.write(reinterpret_cast<char*>(distances.data()), width * height * sizeof(int));
-    distOut.close();
-
-    endTime = high_resolution_clock::now();
-    duration<double> writeDuration = endTime - startTime;
-    cout << "Time to write distance data: " << writeDuration.count() << " seconds." << endl;
+    for (const auto& row : distances) {
+        distOut.write(reinterpret_cast<const char*>(row.data()), row.size() * sizeof(int));
+    }
 
     progress = 100.0;
+    distOut.close();
+    mazeIn.close();
     cout << "Distance calculation complete for start (" << startX << ", " << startY << ")." << endl;
 }
 
@@ -167,19 +137,23 @@ Vec3b getColorForCell(int distTopRight, int distBottomLeft, int maxDist) {
     double normDistTopRight = distTopRight / static_cast<double>(maxDist);
     double normDistBottomLeft = distBottomLeft / static_cast<double>(maxDist);
 
+    // Sinusoidal blend factor
     double blendFactor = 0.5 + 0.5 * sin(10 * (normDistTopRight + normDistBottomLeft) * M_PI);
 
-    int hue1 = static_cast<int>(360 * normDistTopRight);
-    int hue2 = static_cast<int>(360 * (1 - normDistBottomLeft));
+    // Color ranges for blending
+    int hue1 = static_cast<int>(360 * normDistTopRight);    // Range for top right
+    int hue2 = static_cast<int>(360 * (1 - normDistBottomLeft)); // Range for bottom left
 
+    // Blend the two hues
     int hue = static_cast<int>((hue1 * blendFactor + hue2 * (1 - blendFactor))) % 360;
 
+    // Create a Vec3b color in HSV space
     Vec3b hsvColor;
-    hsvColor[0] = hue;
-    hsvColor[1] = 200;
-    hsvColor[2] = 255;
+    hsvColor[0] = hue;  // Hue
+    hsvColor[1] = 200;  // Saturation (high value for vibrant colors)
+    hsvColor[2] = 255;  // Value (maximum brightness)
 
-
+    // Convert HSV to BGR for display
     Mat hsv(1, 1, CV_8UC3, hsvColor);
     Mat rgb;
     cvtColor(hsv, rgb, COLOR_HSV2BGR);
@@ -281,9 +255,9 @@ void renderMaze(const string& mazeFile, const string& distTopRightFile, const st
     imwrite(outputFile, image);
     cout << "Rendering complete." << endl;
 }
-pair<int, int> bfsFarthestPoint(vector<vector<int>>& maze, int width, int height, int startX, int startY) {
+pair<int, int> bfsFarthestPoint(const vector<vector<int>>& maze, int width, int height, int startX, int startY) {
     vector<vector<bool>> visited(height, vector<bool>(width, false));
-    queue<pair<pair<int, int>, int>> q;
+    queue<pair<pair<int, int>, int>> q; // ((x, y), distance)
     q.push({{startX, startY}, 0});
     visited[startY][startX] = true;
 
@@ -315,7 +289,7 @@ pair<int, int> bfsFarthestPoint(vector<vector<int>>& maze, int width, int height
     return farthestPoint;
 }
 
-pair<pair<int, int>, pair<int, int>> generateRandomStartAndEnd(string& mazeFile, int width, int height) {
+pair<pair<int, int>, pair<int, int>> generateRandomStartAndEnd(const string& mazeFile, int width, int height) {
     ifstream mazeIn(mazeFile, ios::binary);
     vector<vector<int>> maze(height, vector<int>(width, 0));
     for (auto& row : maze) {
@@ -325,7 +299,7 @@ pair<pair<int, int>, pair<int, int>> generateRandomStartAndEnd(string& mazeFile,
 
     int startX = rand() % width;
     int startY = rand() % height;
-    while (maze[startY][startX] == 0) {
+    while (maze[startY][startX] == 0) { // Ensure starting point is on a path
         startX = rand() % width;
         startY = rand() % height;
     }
@@ -336,7 +310,7 @@ pair<pair<int, int>, pair<int, int>> generateRandomStartAndEnd(string& mazeFile,
     return {firstFarthestPoint, secondFarthestPoint};
 }
 
-void createArtisticMaze(int width, int height, string& outputImage) {
+void createArtisticMaze(int width, int height, const string& outputImage) {
     string mazeFile = DESKTOP_PATH + "maze.bin";
     string distTopRightFile = DESKTOP_PATH + "dist_top_right.bin";
     string distBottomLeftFile = DESKTOP_PATH + "dist_bottom_left.bin";
@@ -416,8 +390,8 @@ string generateRandomSuffix() {
 
 int main() {
     srand(time(0));
-    int width = 1000;
-    int height = 1000;
+    int width = 1001;
+    int height = 1001;
 
     string suffix = generateRandomSuffix();
     string fileName = DESKTOP_PATH + "artistic_maze_" + suffix + ".png";
