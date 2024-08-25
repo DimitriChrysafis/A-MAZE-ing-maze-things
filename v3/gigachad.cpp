@@ -19,7 +19,7 @@ using namespace std;
 using namespace std::chrono;
 namespace fs = std::__fs::filesystem;
 
-const string DESKTOP_PATH = "/Users/dimitrichrysafis/Desktop/";
+const string DESKTOP_PATH = "/Volumes/LaCie/MazeStuff/";
 // put ur path here
 
 const int DX[4] = {1, 0, -1, 0};
@@ -29,8 +29,10 @@ bool isValid(int x, int y, int width, int height) {
     return x >= 0 && x < width && y >= 0 && y < height;
 }
 
-void shuffleDirections(vector<int>& directions) {
-    random_shuffle(directions.begin(), directions.end());
+void shuffleDirections(std::vector<int>& directions) {
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(directions.begin(), directions.end(), g);
 }
 
 void generateMaze(const string& mazeFile, int width, int height, int startX, int startY, atomic<double>& progress) {
@@ -41,6 +43,7 @@ void generateMaze(const string& mazeFile, int width, int height, int startX, int
     maze[startY][startX] = 1;
     int totalCells = (width / 2) * (height / 2);
     int visitedCells = 1;
+    double lastReportedProgress = 0.0;
 
     while (!stack.empty()) {
         int x = stack.top().first;
@@ -61,6 +64,12 @@ void generateMaze(const string& mazeFile, int width, int height, int startX, int
                 moved = true;
                 visitedCells++;
                 progress = (visitedCells / static_cast<double>(totalCells)) * 100.0;
+
+                if (progress - lastReportedProgress >= 1.0) { // Report every 1% progress
+                    cout << "Maze generation progress: " << progress << "%" << endl;
+                    lastReportedProgress = progress;
+                }
+
                 break;
             }
         }
@@ -75,15 +84,16 @@ void generateMaze(const string& mazeFile, int width, int height, int startX, int
     }
 
     progress = 100.0;
+    cout << "Maze generation progress: 100%" << endl;
     mazeOut.close();
     cout << "Maze generation complete." << endl;
-
 
     fs::path mazePath(mazeFile);
     auto mazeSize = fs::file_size(mazePath);
     cout << "Maze file stored at: " << mazeFile << endl;
     cout << "Maze file size: " << mazeSize << " bytes" << endl;
 }
+
 
 
 void calculateDistances(const string& mazeFile, const string& distFile, int width, int height, int startX, int startY, atomic<double>& progress) {
@@ -390,8 +400,8 @@ string generateRandomSuffix() {
 
 int main() {
     srand(time(0));
-    int width = 1001;
-    int height = 1001;
+    int width = 10000;
+    int height = 10000;
 
     string suffix = generateRandomSuffix();
     string fileName = DESKTOP_PATH + "artistic_maze_" + suffix + ".png";
