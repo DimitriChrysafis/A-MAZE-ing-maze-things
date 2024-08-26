@@ -284,7 +284,7 @@ pair<int, int> bfsFarthestPoint(const vector<vector<int>>& maze, int width, int 
             maxDist = dist;
             farthestPoint = {x, y};
         }
-        #pragma unroll 4
+#pragma unroll 4
         for (int dir = 0; dir < 4; ++dir) {
             int nx = x + DX[dir];
             int ny = y + DY[dir];
@@ -400,8 +400,8 @@ string generateRandomSuffix() {
 
 int main() {
     srand(time(0));
-    int width = 1000;
-    int height = 1000;
+    int width = 100000;
+    int height = 100000;
 
     string suffix = generateRandomSuffix();
     string fileName = DESKTOP_PATH + "artistic_maze_" + suffix + ".png";
